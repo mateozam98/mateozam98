@@ -223,6 +223,14 @@ export const projects = [
     iconLists: ["/re.svg", "/ts.svg", "/nodejs.svg", "/tail.svg"],
     link: "https://cocktail-app-mz.netlify.app/",
   },
+  {
+    id: 19,
+    title: "Uptask - Tareas",
+    des: "Un proyecto sepaarado por Backend en Nodejs y Frontend en React JS con Vitejs, la base de datos esta en un repositorio gratuito, la base de datos es MongoDB.  Desarrollado con: ReactJS, Typescript, Node JS, TailwindCSS, MongoDB, Mongoose, Express, Nodejs",
+    img: "/imagen15.svg",
+    iconLists: ["/re.svg", "/ts.svg", "/nodejs.svg", "/tail.svg"],
+    link: "https://uptask-frontend-mz.vercel.app/",
+  },
 ];
 
 export const testimonials = [
