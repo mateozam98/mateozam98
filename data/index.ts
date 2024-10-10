@@ -251,6 +251,15 @@ export const projects = [
     link: "https://uptask-frontend-mz.vercel.app/",
     category: "Desarrollo",
   },
+  {
+    id: 21,
+    title: "Pipeline de YouTube con AWS Lambda, S3 y Athena",
+    des: "El proyecto es una solución automatizada para la ingesta y procesamiento diario de datos desde la API de YouTube hacia AWS. Utiliza AWS Lambda para ejecutar un script en Python que extrae datos de YouTube, los formatea y los almacena como archivos CSV en Amazon S3. Luego, AWS Glue realiza el procesamiento ETL (Extracción, Transformación y Carga) para preparar los datos, los cuales se pueden consultar mediante AWS Athena para análisis más profundos.",
+    img: "/imagen16.svg",
+    iconLists: ["/python.svg", "/youtube.svg", "/aws.svg", "/jupyter.svg"],
+    link: "https://github.com/mateozam98/youtube-aws-etl-pipeline",
+    category: "Análisis de Datos",
+  }
 ];
 
 export const testimonials = [
