@@ -68,7 +68,11 @@
 
 @layer base {
   * {
-    @apply border-border !scroll-smooth;
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Espacio para el navbar fijo */
   }
   body {
     @apply bg-background text-foreground;

@@ -30,13 +30,15 @@ export const FloatingNav = ({
     if (typeof current === "number") {
       let direction = current! - scrollYProgress.getPrevious()!;
 
-      if (scrollYProgress.get() < 0.05) {
-        // also set true for the initial state
+      if (scrollYProgress.get() < 0.1) {
+        // Mantener visible cuando esté en la parte superior
         setVisible(true);
       } else {
         if (direction < 0) {
+          // Scroll hacia arriba - mostrar navbar
           setVisible(true);
         } else {
+          // Scroll hacia abajo - ocultar navbar
           setVisible(false);
         }
       }
@@ -55,7 +57,8 @@ export const FloatingNav = ({
           opacity: visible ? 1 : 0,
         }}
         transition={{
-          duration: 0.2,
+          duration: 0.3,
+          ease: "easeInOut",
         }}
         className={cn(
           // change rounded-full to rounded-lg

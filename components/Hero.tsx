@@ -5,7 +5,7 @@ import MagicButton from "./MagicButton";
 
 const Hero = () => {
   return (
-    <div className="pb-20 pt-36" >
+    <div id="inicio" className="pb-20 pt-36 relative min-h-screen" >
       {/**
        *  UI: Spotlights
        *  Link: https://ui.aceternity.com/components/spotlight
@@ -28,8 +28,8 @@ const Hero = () => {
        *  0.2 to 0.03
        */}
       <div
-        className="h-screen w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.03] bg-grid-black-100/[0.03]
-       absolute top-0 left-0 flex items-center justify-center"
+        className="h-full w-full dark:bg-black-100 bg-white dark:bg-grid-white/[0.03] bg-grid-black-100/[0.03]
+       absolute inset-0 flex items-center justify-center"
       >
         {/* Radial gradient for the container to give a faded look */}
         <div

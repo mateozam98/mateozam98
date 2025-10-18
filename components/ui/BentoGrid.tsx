@@ -1,8 +1,12 @@
+"use client";
+
 import { useState } from "react";
 import { IoCopyOutline } from "react-icons/io5";
+import Image from "next/image";
+import dynamic from "next/dynamic"; // Import dynamic for SSR handling
 
-// Also install this npm i --save-dev @types/react-lottie
-import Lottie from "react-lottie";
+// Dynamically import a client-only wrapper for react-lottie
+const LottieConfetti = dynamic(() => import("./LottieConfetti"), { ssr: false });
 
 import { cn } from "@/lib/utils";
 
@@ -66,10 +70,18 @@ export const BentoGridItem = ({
     },
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     const text = "mzambranoandrade@hotmail.com";
-    navigator.clipboard.writeText(text);
-    setCopied(true);
+    try {
+      if (typeof window !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        // Reset the copied state after 3 seconds
+        setTimeout(() => setCopied(false), 3000);
+      }
+    } catch (error) {
+      console.error("Failed to copy text: ", error);
+    }
   };
 
   return (
@@ -90,10 +102,11 @@ export const BentoGridItem = ({
       {/* add img divs */}
       <div className={`${id === 6 && "flex justify-center"} h-full`}>
         <div className="w-full h-full absolute">
-          {img && (
-            <img
+          {img && img !== "/" && (
+            <Image
               src={img}
               alt={img}
+              fill
               className={cn(imgClassName, "object-cover object-center ")}
             />
           )}
@@ -102,11 +115,11 @@ export const BentoGridItem = ({
           className={`absolute right-0 -bottom-5 ${id === 5 && "w-full opacity-80"
             } `}
         >
-          {spareImg && (
-            <img
+          {spareImg && spareImg !== "/" && (
+            <Image
               src={spareImg}
               alt={spareImg}
-              //   width={220}
+              fill
               className="object-cover object-center w-full h-full"
             />
           )}
@@ -180,7 +193,7 @@ export const BentoGridItem = ({
                   }`}
               >
                 {/* <img src="/confetti.gif" alt="confetti" /> */}
-                <Lottie options={defaultOptions} height={200} width={400} />
+                <LottieConfetti options={defaultOptions} height={200} width={400} />
               </div>
 
               <MagicButton
