@@ -5,14 +5,17 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { companies } from "@/data";
 import { LampDemo } from "./ui/Lamp"; // Importa el componente LampDemo
+import type { Lang } from "@/lib/i18n";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
-const Clients = () => {
+const Clients = ({ lang }: { lang: Lang }) => {
   return (
     <section className="py-5">
+      <ScrollReveal variant="fade-right">
 
       <div className="flex flex-col items-center max-lg:mt-10">
         {/* Reemplaza la sección de testimonios con LampDemo */}
-        <LampDemo />
+        <LampDemo lang={lang} />
 
         {/* Mantén la sección de logotipos de empresas */}
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-16 max-lg:mt-10">
@@ -42,6 +45,7 @@ const Clients = () => {
           ))}
         </div>
       </div>
+      </ScrollReveal>
     </section>
   );
 };

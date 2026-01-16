@@ -2,8 +2,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import type { Lang } from "@/lib/i18n";
 
-export function LampDemo() {
+const copy: Record<Lang, string> = {
+  es: "Creando código, iluminando\n caminos de la manera correcta.",
+  en: "Building code, lighting the\n path the right way.",
+};
+
+export function LampDemo({ lang = "es" }: { lang?: Lang }) {
+  const text = copy[lang] ?? copy.es;
+  const [line1, line2] = text.split("\n");
   return (
     <LampContainer>
       <motion.h1
@@ -16,7 +24,10 @@ export function LampDemo() {
         }}
         className="mt-8 bg-gradient-to-br from-slate-300 to-slate-500 py-4 bg-clip-text text-center text-4xl font-medium tracking-tight text-transparent md:text-7xl"
       >
-        Creando código, iluminando<br /> caminos de la manera correcta. <br />
+        {line1}
+        <br />
+        {line2}
+        <br />
       </motion.h1>
     </LampContainer>
   );

@@ -1,14 +1,32 @@
+"use client";
+
 import React from "react";
 import Image from "next/image";
 
-import { workExperience } from "@/data";
+import { getWorkExperience } from "@/data";
+import type { Lang } from "@/lib/i18n";
 import { Button } from "./ui/MovingBorders";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
-const Experience = () => {
+const copy = {
+  es: {
+    heading: "Mi",
+    highlight: "experiencia",
+    suffix: "profesional",
+  },
+  en: {
+    heading: "My",
+    highlight: "professional",
+    suffix: "experience",
+  },
+} as const;
+
+const Experience = ({ lang }: { lang: Lang }) => {
+  const workExperience = getWorkExperience(lang);
   return (
-    <div className="py-20 w-full">
+    <ScrollReveal variant="fade-left" className="py-20 w-full">
       <h1 className="heading">
-        Mi <span className="text-purple">experiencia </span>profesional
+        {copy[lang].heading} <span className="text-purple">{copy[lang].highlight} </span>{copy[lang].suffix}
       </h1>
 
       <div className="w-full mt-12 grid lg:grid-cols-4 grid-cols-1 gap-10">
@@ -50,7 +68,7 @@ const Experience = () => {
           </Button>
         ))}
       </div>
-    </div>
+    </ScrollReveal>
   );
 };
 

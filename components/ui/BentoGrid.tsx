@@ -9,6 +9,7 @@ import dynamic from "next/dynamic"; // Import dynamic for SSR handling
 const LottieConfetti = dynamic(() => import("./LottieConfetti"), { ssr: false });
 
 import { cn } from "@/lib/utils";
+import type { Lang } from "@/lib/i18n";
 
 
 import { BackgroundGradientAnimation } from "./GradientBg";
@@ -46,6 +47,7 @@ export const BentoGridItem = ({
   imgClassName,
   titleClassName,
   spareImg,
+  lang = "es",
 }: {
   className?: string;
   id: number;
@@ -55,6 +57,7 @@ export const BentoGridItem = ({
   imgClassName?: string;
   titleClassName?: string;
   spareImg?: string;
+  lang?: Lang;
 }) => {
   const leftLists = ["ReactJS", "NodeJS", "SQL  "];
   const rightLists = ["NextJS", "AWS", "ELK"];
@@ -83,6 +86,17 @@ export const BentoGridItem = ({
       console.error("Failed to copy text: ", error);
     }
   };
+
+  const copy = {
+    es: {
+      copy: "Copiar mi email",
+      copied: "¡Email copiado!",
+    },
+    en: {
+      copy: "Copy my email",
+      copied: "Email copied!",
+    },
+  } as const;
 
   return (
     <div
@@ -197,7 +211,7 @@ export const BentoGridItem = ({
               </div>
 
               <MagicButton
-                title={copied ? "¡Email copiado!" : "Copiar mi email"}
+                title={copied ? copy[lang].copied : copy[lang].copy}
                 icon={<IoCopyOutline />}
                 position="left"
                 handleClick={handleCopy}

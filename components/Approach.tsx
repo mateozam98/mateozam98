@@ -1,21 +1,77 @@
+"use client";
+
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { CanvasRevealEffect } from "./ui/CanvasRevealEffect";
+import type { Lang } from "@/lib/i18n";
+import ScrollReveal from "@/components/ui/ScrollReveal";
 
-const Approach = () => {
+const copy: Record<Lang, {
+  heading: string;
+  highlight: string;
+  suffix: string;
+  phase1Title: string;
+  phase1Desc: string;
+  phase2Title: string;
+  phase2Desc: string;
+  phase3Title: string;
+  phase3Desc: string;
+  phase1Label: string;
+  phase2Label: string;
+  phase3Label: string;
+}> = {
+  es: {
+    heading: "Mi",
+    highlight: "enfoque",
+    suffix: "profesional",
+    phase1Title: "Gestión de Datos y Seguridad",
+    phase1Desc:
+      "Con experiencia en administración de bases de datos y desarrollo de software, especializado en sistemas seguros y eficientes. Manejo la instalación, configuración, optimización y seguridad de bases de datos, y me mantengo al día con las últimas tendencias tecnológicas para garantizar soluciones robustas y seguras.",
+    phase2Title: "Desarrollo de Software",
+    phase2Desc:
+      "Experimentado profesional en el campo del desarrollo de software. Mi carrera se centra en el desarrollo de aplicaciones efectivas y la participación en proyectos de software, con un enfoque en la creación de sistemas altamente funcionales y seguros.",
+    phase3Title: "Desarrollo y lanzamiento de software",
+    phase3Desc:
+      "¡Aquí es donde ocurre la magia! Basado en el diseño aprobado, traduciré todo a código funcional y construiré tu sitio web desde cero.",
+    phase1Label: "Fase 1",
+    phase2Label: "Fase 2",
+    phase3Label: "Fase 3",
+  },
+  en: {
+    heading: "My",
+    highlight: "approach",
+    suffix: "professional",
+    phase1Title: "Data Management & Security",
+    phase1Desc:
+      "Experienced in database administration and software development, focused on secure and efficient systems. I handle installation, configuration, optimization, and security while staying up to date with modern trends to deliver robust solutions.",
+    phase2Title: "Software Development",
+    phase2Desc:
+      "Seasoned software developer focused on building effective applications and contributing to software projects, with an emphasis on highly functional and secure systems.",
+    phase3Title: "Build & Launch",
+    phase3Desc:
+      "This is where the magic happens. Based on the approved design, I translate everything into functional code and build your website from scratch.",
+    phase1Label: "Phase 1",
+    phase2Label: "Phase 2",
+    phase3Label: "Phase 3",
+  },
+};
+
+const Approach = ({ lang }: { lang: Lang }) => {
+  const content = copy[lang];
   return (
     <section className="w-full py-20">
+      <ScrollReveal variant="zoom">
       <h1 className="heading">
-        Mi <span className="text-purple">enfoque</span> profesional
+        {content.heading} <span className="text-purple">{content.highlight}</span> {content.suffix}
       </h1>
       {/* remove bg-white dark:bg-black */}
       <div className="my-20 flex flex-col lg:flex-row items-center justify-center w-full gap-4">
         {/* add des prop */}
         <Card
-          title="Gestión de Datos y Seguridad"
-          icon={<AceternityIcon order="Fase 1" />}
-          des="Con experiencia en administración de bases de datos y desarrollo de software, especializado en sistemas seguros y eficientes. Manejo la instalación, configuración, optimización y seguridad de bases de datos, y me mantengo al día con las últimas tendencias tecnológicas para garantizar soluciones robustas y seguras."
+          title={content.phase1Title}
+          icon={<AceternityIcon order={content.phase1Label} />}
+          des={content.phase1Desc}
         >
           <CanvasRevealEffect
             animationSpeed={5.1}
@@ -24,9 +80,9 @@ const Approach = () => {
           />
         </Card>
         <Card
-          title="Desarrollo de Software"
-          icon={<AceternityIcon order="Fase 2" />}
-          des="Experimentado profesional en el campo del desarrollo de software. Mi carrera se centra en el desarrollo de aplicaciones efectivas y la participación en proyectos de software, con un enfoque en la creación de sistemas altamente funcionales y seguros."
+          title={content.phase2Title}
+          icon={<AceternityIcon order={content.phase2Label} />}
+          des={content.phase2Desc}
         >
           <CanvasRevealEffect
             animationSpeed={3}
@@ -44,11 +100,9 @@ const Approach = () => {
           {/* <div className="absolute inset-0 [mask-image:radial-gradient(400px_at_center,white,transparent)] bg-black/50 dark:bg-black/90" /> */}
         </Card>
         <Card
-          title="Desarrollo y lanzamiento de software"
-          icon={<AceternityIcon order="Fase 3" />}
-          des="¡Aquí es donde ocurre la magia! Basado en el diseño aprobado, 
-          Traduciré todo a código funcional y construiré tu sitio web.
-          desde cero."
+          title={content.phase3Title}
+          icon={<AceternityIcon order={content.phase3Label} />}
+          des={content.phase3Desc}
         >
           <CanvasRevealEffect
             animationSpeed={3}
@@ -57,6 +111,7 @@ const Approach = () => {
           />
         </Card>
       </div>
+      </ScrollReveal>
     </section>
   );
 };
