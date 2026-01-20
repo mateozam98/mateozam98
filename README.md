@@ -1,10 +1,14 @@
 # Personal Portfolio – Full Stack Developer
 
-This is my personal portfolio built with **Next.js**, showcasing my work, projects, and experience as a **Full Stack Developer**. The goal of this project is to present my skills, approach to development, and the type of products I enjoy building, with a strong focus on performance, clean code, and user experience.
+This repository contains my personal portfolio built with **Next.js**, showcasing my projects, technical skills, and experience as a **Full Stack Developer**. It reflects my approach to building modern, scalable, and user-focused web applications.
 
-## About Me
+## Professional Profile
 
-I’m currently based in **Spain** and actively open to **international opportunities**, with a strong intention to **relocate** for the right role and team. I’m especially interested in working with product-driven companies and early-stage startups where I can have a real impact and grow alongside the business.
+I am a **Full Stack Developer currently based in Spain**, actively seeking **international opportunities**. I am particularly interested in working with global teams, product-driven companies, and early-stage startups where I can make a meaningful impact and grow alongside the business.
+
+## Open to Relocation & Visa Sponsorship
+
+I am **open to relocation** and **international roles**, including opportunities that require **visa sponsorship**. I am flexible regarding location and motivated to relocate for the right team, product, and long-term opportunity. I am also open to **remote-first roles** as a step toward relocation.
 
 ## Tech Stack
 
@@ -12,12 +16,13 @@ I’m currently based in **Spain** and actively open to **international opportun
 - React
 - TypeScript
 - JavaScript
-- Modern CSS / Tailwind
-- Responsive and accessible UI practices
+- Tailwind CSS
+- Modern frontend and backend best practices
+- Responsive, accessible, and performance-oriented UI
 
-## Getting Started
+## Running the Project Locally
 
-To run the project locally:
+To start the development server:
 
 ```bash
 npm run dev
