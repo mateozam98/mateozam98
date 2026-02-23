@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getAdminCookieName, verifyAdminSession } from "@/lib/adminAuth";
 import { detectLang, getLangCookieName } from "@/lib/i18n";
 import ProjectManager from "@/components/admin/ProjectManager";
+import ExperienceManager from "@/components/admin/ExperienceManager";
 
 export const metadata = {
   title: "Admin Dashboard",
@@ -53,6 +54,7 @@ export default async function AdminDashboardPage() {
           </div>
 
           <ProjectManager lang={lang} />
+          <ExperienceManager lang={lang} />
         </div>
       </div>
     </main>

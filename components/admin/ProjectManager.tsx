@@ -111,13 +111,13 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
   const content = copy[lang];
   const [draft, setDraft] = useState<ProjectDraft>(defaultDraft);
   const [projects, setProjects] = useState<StoredProject[]>([]);
+  const [showForm, setShowForm] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [seeding, setSeeding] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -188,38 +188,6 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
     }
   };
 
-  const seedProjects = async () => {
-    setSeeding(true);
-    setSaveMessage(null);
-    try {
-      const res = await fetch("/api/projects/seed", { method: "POST" });
-      if (!res.ok) {
-        const data = await res.json().catch(() => null);
-        setSaveMessage(data?.error || "Error al migrar");
-      } else {
-        setSaveMessage(
-          lang === "es"
-            ? "Proyectos base migrados."
-            : "Base projects migrated.",
-        );
-        const refreshed = await fetch("/api/projects", { cache: "no-store" });
-        const data = await refreshed.json().catch(() => null);
-        if (data?.projects && Array.isArray(data.projects)) {
-          const enriched = data.projects.map((item: ProjectDraft & { createdAt?: number }) => ({
-            ...item,
-            id: crypto.randomUUID(),
-            createdAt: item.createdAt ?? Date.now(),
-          }));
-          setProjects(enriched);
-        }
-      }
-    } catch {
-      setSaveMessage(lang === "es" ? "Error al migrar" : "Failed to migrate");
-    } finally {
-      setSeeding(false);
-    }
-  };
-
   const addProject = async () => {
     if (!draft.titleEs || !draft.titleEn || !draft.link || !draft.image) return;
     const next = [
@@ -233,10 +201,12 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
     setProjects(next);
     setDraft(defaultDraft);
     await persistProjects(next);
+    setShowForm(false);
   };
 
   const startEdit = (project: StoredProject) => {
     setEditingId(project.id);
+    setShowForm(true);
     setDraft({
       titleEs: project.titleEs,
       titleEn: project.titleEn,
@@ -252,6 +222,7 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
   const cancelEdit = () => {
     setEditingId(null);
     setDraft(defaultDraft);
+    setShowForm(false);
   };
 
   const saveEdit = async () => {
@@ -266,6 +237,7 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
     setEditingId(null);
     setDraft(defaultDraft);
     await persistProjects(next);
+    setShowForm(false);
   };
 
   const uploadImage = async (file: File) => {
@@ -314,6 +286,14 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
     await navigator.clipboard.writeText(JSON.stringify(payload, null, 2));
   };
 
+  const toggleForm = () => {
+    if (editingId) {
+      setEditingId(null);
+      setDraft(defaultDraft);
+    }
+    setShowForm((prev) => !prev);
+  };
+
   return (
     <div className="rounded-2xl border border-white/10 bg-black/40 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -324,14 +304,6 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
-            onClick={seedProjects}
-            className="rounded-lg border border-white/20 px-3 py-2 text-xs text-white/80"
-            disabled={seeding}
-          >
-            {lang === "es" ? "Migrar base" : "Migrate base"}
-          </button>
-          <button
-            type="button"
             onClick={copyJson}
             className="rounded-lg border border-white/20 px-3 py-2 text-xs text-white/80"
           >
@@ -340,140 +312,14 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
         </div>
       </div>
 
-      <div className="mt-6 grid gap-4 md:grid-cols-2">
-        <div className="space-y-3">
-          <label className="text-xs text-white/70">{content.fields.titleEs}</label>
-          <input
-            value={draft.titleEs}
-            onChange={(event) => handleChange("titleEs", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          />
-
-          <label className="text-xs text-white/70">{content.fields.titleEn}</label>
-          <input
-            value={draft.titleEn}
-            onChange={(event) => handleChange("titleEn", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          />
-
-          <label className="text-xs text-white/70">{content.fields.descEs}</label>
-          <textarea
-            value={draft.descEs}
-            onChange={(event) => handleChange("descEs", event.target.value)}
-            className="min-h-[90px] w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          />
-
-          <label className="text-xs text-white/70">{content.fields.descEn}</label>
-          <textarea
-            value={draft.descEn}
-            onChange={(event) => handleChange("descEn", event.target.value)}
-            className="min-h-[90px] w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          />
+      <div className="mt-6 rounded-xl border border-white/10 p-4">
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold text-white/90">
+            {lang === "es" ? "Proyectos añadidos" : "Added projects"}
+          </h3>
         </div>
 
         <div className="space-y-3">
-          <label className="text-xs text-white/70">{content.fields.link}</label>
-          <input
-            value={draft.link}
-            onChange={(event) => handleChange("link", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          />
-
-          <label className="text-xs text-white/70">{content.fields.image}</label>
-          <div className="space-y-2">
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(event) => {
-                const file = event.target.files?.[0];
-                if (file) uploadImage(file);
-              }}
-              className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1 file:text-xs file:text-white/80"
-            />
-            {uploadError ? (
-              <p className="text-xs text-red-400">{uploadError}</p>
-            ) : null}
-            {uploadSuccess ? (
-              <p className="text-xs text-emerald-400">{uploadSuccess}</p>
-            ) : null}
-            <input
-              value={draft.image}
-              onChange={(event) => handleChange("image", event.target.value)}
-              className="hidden"
-              placeholder="https://..."
-            />
-          </div>
-
-          <label className="text-xs text-white/70">{content.fields.category}</label>
-          <select
-            value={draft.categoryKey}
-            onChange={(event) => handleChange("categoryKey", event.target.value)}
-            className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
-          >
-            {categoryOptions.map((option) => (
-              <option key={option.key} value={option.key}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-
-          <button
-            type="button"
-            onClick={editingId ? saveEdit : addProject}
-            className="mt-2 w-full rounded-lg bg-white px-3 py-2 text-sm font-semibold text-black disabled:opacity-50"
-            disabled={uploading || saving}
-          >
-            {uploading
-              ? content.uploading
-              : editingId
-                ? lang === "es"
-                  ? "Guardar cambios"
-                  : "Save changes"
-                : content.add}
-          </button>
-          {editingId ? (
-            <button
-              type="button"
-              onClick={cancelEdit}
-              className="mt-2 w-full rounded-lg border border-white/20 px-3 py-2 text-sm text-white/70"
-              disabled={uploading || saving}
-            >
-              {lang === "es" ? "Cancelar edición" : "Cancel edit"}
-            </button>
-          ) : null}
-          {saveMessage ? (
-            <p className="text-xs text-emerald-400">{saveMessage}</p>
-          ) : null}
-        </div>
-      </div>
-
-        <div className="mt-6">
-          <label className="text-xs text-white/70">{content.fields.tools}</label>
-          <div className="mt-2 flex flex-wrap gap-2">
-            {toolOptions.map((tool) => {
-              const active = draft.iconLists.includes(tool.icon);
-              return (
-                <button
-                  key={tool.key}
-                  type="button"
-                  onClick={() => toggleTool(tool.icon)}
-                  className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
-                    active
-                      ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-200"
-                      : "border-white/10 text-white/70 hover:border-white/30"
-                  }`}
-                >
-                  <span className="h-5 w-5 rounded-full bg-black/40 p-1">
-                    <img src={tool.icon} alt={tool.label} />
-                  </span>
-                  {tool.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-      <div className="mt-6 space-y-3">
         {projects.length === 0 ? (
           <p className="text-sm text-white/60">{content.empty}</p>
         ) : (
@@ -517,6 +363,166 @@ export default function ProjectManager({ lang }: ProjectManagerProps) {
             </div>
           ))
         )}
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-xl border border-white/10 p-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="text-sm font-semibold text-white/90">
+            {editingId
+              ? lang === "es"
+                ? "Editar proyecto"
+                : "Edit project"
+              : lang === "es"
+                ? "Nuevo proyecto"
+                : "New project"}
+          </h3>
+          <button
+            type="button"
+            onClick={toggleForm}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-white/10 text-xl leading-none text-white hover:bg-white/20"
+            aria-label={lang === "es" ? "Añadir proyecto" : "Add project"}
+          >
+            +
+          </button>
+        </div>
+
+        {showForm || editingId ? (
+          <>
+            <div className="mt-6 grid gap-4 md:grid-cols-2">
+              <div className="space-y-3">
+                <label className="text-xs text-white/70">{content.fields.titleEs}</label>
+                <input
+                  value={draft.titleEs}
+                  onChange={(event) => handleChange("titleEs", event.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                />
+
+                <label className="text-xs text-white/70">{content.fields.titleEn}</label>
+                <input
+                  value={draft.titleEn}
+                  onChange={(event) => handleChange("titleEn", event.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                />
+
+                <label className="text-xs text-white/70">{content.fields.descEs}</label>
+                <textarea
+                  value={draft.descEs}
+                  onChange={(event) => handleChange("descEs", event.target.value)}
+                  className="min-h-[90px] w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                />
+
+                <label className="text-xs text-white/70">{content.fields.descEn}</label>
+                <textarea
+                  value={draft.descEn}
+                  onChange={(event) => handleChange("descEn", event.target.value)}
+                  className="min-h-[90px] w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <label className="text-xs text-white/70">{content.fields.link}</label>
+                <input
+                  value={draft.link}
+                  onChange={(event) => handleChange("link", event.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                />
+
+                <label className="text-xs text-white/70">{content.fields.image}</label>
+                <div className="space-y-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) uploadImage(file);
+                    }}
+                    className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm file:mr-3 file:rounded-md file:border-0 file:bg-white/10 file:px-3 file:py-1 file:text-xs file:text-white/80"
+                  />
+                  {uploadError ? (
+                    <p className="text-xs text-red-400">{uploadError}</p>
+                  ) : null}
+                  {uploadSuccess ? (
+                    <p className="text-xs text-emerald-400">{uploadSuccess}</p>
+                  ) : null}
+                  <input
+                    value={draft.image}
+                    onChange={(event) => handleChange("image", event.target.value)}
+                    className="hidden"
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <label className="text-xs text-white/70">{content.fields.category}</label>
+                <select
+                  value={draft.categoryKey}
+                  onChange={(event) => handleChange("categoryKey", event.target.value)}
+                  className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm"
+                >
+                  {categoryOptions.map((option) => (
+                    <option key={option.key} value={option.key}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+
+                <button
+                  type="button"
+                  onClick={editingId ? saveEdit : addProject}
+                  className="mt-2 w-full rounded-lg bg-white px-3 py-2 text-sm font-semibold text-black disabled:opacity-50"
+                  disabled={uploading || saving}
+                >
+                  {uploading
+                    ? content.uploading
+                    : editingId
+                      ? lang === "es"
+                        ? "Guardar cambios"
+                        : "Save changes"
+                      : content.add}
+                </button>
+                {editingId ? (
+                  <button
+                    type="button"
+                    onClick={cancelEdit}
+                    className="mt-2 w-full rounded-lg border border-white/20 px-3 py-2 text-sm text-white/70"
+                    disabled={uploading || saving}
+                  >
+                    {lang === "es" ? "Cancelar edición" : "Cancel edit"}
+                  </button>
+                ) : null}
+                {saveMessage ? (
+                  <p className="text-xs text-emerald-400">{saveMessage}</p>
+                ) : null}
+              </div>
+            </div>
+
+            <div className="mt-6">
+              <label className="text-xs text-white/70">{content.fields.tools}</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {toolOptions.map((tool) => {
+                  const active = draft.iconLists.includes(tool.icon);
+                  return (
+                    <button
+                      key={tool.key}
+                      type="button"
+                      onClick={() => toggleTool(tool.icon)}
+                      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs transition ${
+                        active
+                          ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-200"
+                          : "border-white/10 text-white/70 hover:border-white/30"
+                      }`}
+                    >
+                      <span className="h-5 w-5 rounded-full bg-black/40 p-1">
+                        <img src={tool.icon} alt={tool.label} />
+                      </span>
+                      {tool.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </div>
   );
