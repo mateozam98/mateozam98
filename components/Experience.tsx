@@ -66,7 +66,14 @@ const Experience = ({ lang }: { lang: Lang }) => {
       }))
       .sort((a, b) => (b.createdAt ?? 0) - (a.createdAt ?? 0));
 
-    return [...mappedRemote, ...workExperience];
+    const mappedBase = workExperience.map((item) => ({
+      ...item,
+      className: "md:col-span-2",
+      isCurrent: false,
+      createdAt: 0,
+    }));
+
+    return [...mappedRemote, ...mappedBase];
   }, [lang, remoteExperience, workExperience]);
 
   return (
